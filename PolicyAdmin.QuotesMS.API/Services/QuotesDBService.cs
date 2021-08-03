@@ -3,6 +3,7 @@ using PolicyAdmin.QuotesMS.API.Data;
 using PolicyAdmin.QuotesMS.API.DataLayer;
 using PolicyAdmin.QuotesMS.API.Interface;
 using PolicyAdmin.QuotesMS.API.Models;
+using PolicyAdmin.QuotesMS.API.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,14 +26,14 @@ namespace PolicyAdmin.QuotesMS.API.Services
             return quotes;
         }
 
-        public IEnumerable<QuoteMaster> GetQuotes(Policy policy)
+        public IEnumerable<QuoteMaster> GetQuotes(PropertyType propertyType, int propertyValue, int businessValue)
         {
             var quotes =  _context.QuotesMaster.Where(quote => 
-                                        quote.PropertyType == policy.PropertyType &&
-                                        quote.PropertyValueRangeFrom <=policy.PropertyValue &&
-                                        policy.PropertyValue<=quote.PropertyValueRangeTo &&
-                                        quote.BusinesssValueRangeFrom <= policy.BusinessValue &&
-                                        policy.BusinessValue <= quote.BusinesssValueRangeTo
+                                        quote.PropertyType == propertyType &&
+                                        quote.PropertyValueRangeFrom <=propertyValue &&
+                                        propertyValue <= quote.PropertyValueRangeTo &&
+                                        quote.BusinesssValueRangeFrom <= businessValue &&
+                                        businessValue <=quote.BusinesssValueRangeTo
                                         );
             return quotes;
         }

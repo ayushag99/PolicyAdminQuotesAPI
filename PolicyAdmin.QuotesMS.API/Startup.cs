@@ -10,6 +10,9 @@ using PolicyAdmin.QuotesMS.API.Repository;
 using PolicyAdmin.QuotesMS.API.DataLayer;
 using PolicyAdmin.QuotesMS.API.Services;
 using PolicyAdmin.QuotesMS.API.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace PolicyAdmin.QuotesMS.API
 {
@@ -39,6 +42,27 @@ namespace PolicyAdmin.QuotesMS.API
             services.AddTransient<IQuoteRepository,QuoteRepository>();
 
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(opt =>
+                {
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Jwt:Issuer"],
+                        ValidAudience = Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]))
+                    };
+                });
+            services.AddCors(c => c.AddPolicy("POD_1_Policy", builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            }));
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -64,7 +88,7 @@ namespace PolicyAdmin.QuotesMS.API
             }
 
             app.UseRouting();
-
+            app.UseCors("POD_1_Policy");
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -1,5 +1,6 @@
 ﻿using PolicyAdmin.QuotesMS.API.Interface;
 using PolicyAdmin.QuotesMS.API.Models;
+using PolicyAdmin.QuotesMS.API.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,9 @@ namespace PolicyAdmin.QuotesMS.API.Repository
             return _provider.GetAllQuotes();
         }
 
-        public async Task<IEnumerable<QuoteMaster>> GetQuotes(Policy policy)
+        public async Task<IEnumerable<QuoteMaster>> GetQuotes(PropertyType propertyType, int propertyValue, int businessValue)
         {
-            return _provider.GetQuotes(policy);
+            return _provider.GetQuotes( propertyType,  propertyValue,  businessValue);
         }
     }
 }

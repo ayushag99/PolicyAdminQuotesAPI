@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PolicyAdmin.QuotesMS.API.Interface;
 using PolicyAdmin.QuotesMS.API.Models;
+using PolicyAdmin.QuotesMS.API.Models.Enum;
 using PolicyAdmin.QuotesMS.API.Repository;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ namespace PolicyAdmin.QuotesMS.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
+    //[Authorize(AuthenticationSchemes ="Bearer")]
     public class QuotesController : Controller
     {
         private readonly IQuoteRepository _repository;
@@ -22,9 +25,9 @@ namespace PolicyAdmin.QuotesMS.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<QuoteMaster>> getQuotesForPolicy([FromBody] Policy policy)
+        public async Task<IEnumerable<QuoteMaster>> getQuotesForPolicy(PropertyType propertyType, int propertyValue, int businessValue)
         {
-            IEnumerable<QuoteMaster> quotes = await _repository.GetQuotes(policy);
+            IEnumerable<QuoteMaster> quotes = await _repository.GetQuotes( propertyType,  propertyValue,  businessValue);
             return quotes;
         }
 
