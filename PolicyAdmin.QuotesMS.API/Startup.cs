@@ -38,8 +38,16 @@ namespace PolicyAdmin.QuotesMS.API
             }
             else
             {
-                services.AddDbContext<QuotesContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Database")));
-                _log4net.Info("Initialized SQL DB");
+                try
+                {
+                    services.AddDbContext<QuotesContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Database")));
+                    _log4net.Info("Initialized SQL DB");
+                }
+                catch (Exception e)
+                {
+                    _log4net.Error("Error In Connection to Databse : " + e.Message);
+                }
+
             }
 
             services.AddTransient<IQuotesDBService,QuotesDBService>();
@@ -86,7 +94,7 @@ namespace PolicyAdmin.QuotesMS.API
             try
             {
                 _log4net.Info("Data Seding for In-Memory DB Started");
-                if (Configuration.GetValue<bool>("InMemoryDatabase") == false)
+                if (Configuration.GetValue<bool>("InMemoryDatabase"))
                 {
                     var scopeeee = app.ApplicationServices.CreateScope();
                     var context = scopeeee.ServiceProvider.GetRequiredService<QuotesContext>();
