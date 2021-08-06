@@ -14,7 +14,7 @@ namespace PolicyAdmin.QuotesMS.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes ="Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class QuotesController : Controller
     {
         private readonly IQuoteRepository _repository;
