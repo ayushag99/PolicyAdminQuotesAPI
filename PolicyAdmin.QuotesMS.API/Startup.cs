@@ -13,14 +13,17 @@ using PolicyAdmin.QuotesMS.API.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System;
 
 namespace PolicyAdmin.QuotesMS.API
 {
     public class Startup
     {
+        static readonly log4net.ILog _log4net = log4net.LogManager.GetLogger("RollingFile");
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _log4net.Info("Initializing Program");
         }
 
         public IConfiguration Configuration { get; }
@@ -31,11 +34,12 @@ namespace PolicyAdmin.QuotesMS.API
             if (Configuration.GetValue<bool>("InMemoryDatabase"))
             {
                 services.AddDbContext<QuotesContext>(options => options.UseInMemoryDatabase("PolicyAdmin_Quotes"));
-               
+                _log4net.Info("Initialized In-Memory DB");
             }
             else
             {
                 services.AddDbContext<QuotesContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Database")));
+                _log4net.Info("Initialized SQL DB");
             }
 
             services.AddTransient<IQuotesDBService,QuotesDBService>();
@@ -79,13 +83,24 @@ namespace PolicyAdmin.QuotesMS.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PolicyAdmin.QuotesMS.API v1"));
             }
-            if (Configuration.GetValue<bool>("inmemorydatabase"))
+            try
             {
-                var scopeeee = app.ApplicationServices.CreateScope();
-                var context = scopeeee.ServiceProvider.GetRequiredService<QuotesContext>();
-                DataGenerator.Initialize(context);
+                _log4net.Info("Data Seding for In-Memory DB Started");
+                if (Configuration.GetValue<bool>("InMemoryDatabase") == false)
+                {
+                    var scopeeee = app.ApplicationServices.CreateScope();
+                    var context = scopeeee.ServiceProvider.GetRequiredService<QuotesContext>();
+                    DataGenerator.Initialize(context);
+
+                }
+                _log4net.Info("Data Seding for In-Memory DB Completed");
+            }
+            catch(Exception e)
+            {
+                _log4net.Error("Exception in Data Seeding: "+  e.Message);
 
             }
+            
 
             app.UseRouting();
             app.UseCors("POD_1_Policy");
