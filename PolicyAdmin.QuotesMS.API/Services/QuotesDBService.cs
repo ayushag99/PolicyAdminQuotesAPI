@@ -32,8 +32,8 @@ namespace PolicyAdmin.QuotesMS.API.Services
                                         quote.PropertyType == propertyType &&
                                         quote.PropertyValueRangeFrom <=propertyValue &&
                                         propertyValue <= quote.PropertyValueRangeTo &&
-                                        quote.BusinesssValueRangeFrom <= businessValue &&
-                                        businessValue <=quote.BusinesssValueRangeTo
+                                        quote.BusinessValueRangeFrom <= businessValue &&
+                                        businessValue <=quote.BusinessValueRangeTo
                                         );
             return quotes;
         }
